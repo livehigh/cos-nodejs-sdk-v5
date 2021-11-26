@@ -3157,6 +3157,7 @@ function getObjectUrl(params, callback) {
         Expires: params.Expires,
         Headers: params.Headers,
         Query: params.Query,
+        ForceSignHost: params.ForceSignHost,
         SignHost: SignHost,
     }, function (err, AuthData) {
         if (!callback) return;
@@ -3331,6 +3332,7 @@ var getSignHost = function (opt) {
 // 异步获取签名
 function getAuthorizationAsync(params, callback) {
 
+    var forceSignHost = params.ForceSignHost === undefined ? this.options.ForceSignHost : params.ForceSignHost;
     var headers = util.clone(params.Headers);
     var headerHost = '';
     util.each(headers, function (v, k) {
@@ -3339,7 +3341,7 @@ function getAuthorizationAsync(params, callback) {
     });
 
     // Host 加入签名计算
-    if (!headerHost && params.SignHost) headers.Host = params.SignHost;
+    if (forceSignHost && !headerHost && params.SignHost) headers.Host = params.SignHost;
 
 
     // 获取凭证的回调，避免用户 callback 多次
@@ -3411,7 +3413,8 @@ function getAuthorizationAsync(params, callback) {
             Expires: params.Expires,
             UseRawKey: self.options.UseRawKey,
             SystemClockOffset: self.options.SystemClockOffset,
-            KeyTime: KeyTime
+            KeyTime: KeyTime,
+            ForceSignHost: forceSignHost,
         });
         var AuthData = {
             Authorization: Authorization,
@@ -3475,6 +3478,7 @@ function getAuthorizationAsync(params, callback) {
             Headers: headers,
             Scope: Scope,
             SystemClockOffset: self.options.SystemClockOffset,
+            ForceSignHost: forceSignHost,
         }, function (AuthData) {
             if (typeof AuthData === 'string') AuthData = {Authorization: AuthData};
             var AuthError = checkAuthError(AuthData);
@@ -3516,6 +3520,7 @@ function getAuthorizationAsync(params, callback) {
                 Expires: params.Expires,
                 UseRawKey: self.options.UseRawKey,
                 SystemClockOffset: self.options.SystemClockOffset,
+                ForceSignHost: forceSignHost,
             });
             var AuthData = {
                 Authorization: Authorization,

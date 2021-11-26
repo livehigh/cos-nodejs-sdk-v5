@@ -76,6 +76,8 @@ var getAuth = function (opt) {
     var method = (opt.method || opt.Method || 'get').toLowerCase();
     var queryParams = clone(opt.Query || opt.params || {});
     var headers = getSignHeaderObj(clone(opt.Headers || opt.headers || {}));
+    // 是否强制签入Header Host；您也可以选择不签入Header Host，但可能导致请求失败或安全漏洞
+    var forceSignHost = opt.ForceSignHost === undefined ? true : opt.ForceSignHost;
 
     var Key = opt.Key || '';
     var pathname;
@@ -87,7 +89,7 @@ var getAuth = function (opt) {
     }
 
     // 如果有传入存储桶，那么签名默认加 Host 参与计算，避免跨桶访问
-    if (!headers.Host && !headers.host && opt.Bucket && opt.Region) headers.Host = opt.Bucket + '.cos.' + opt.Region + '.myqcloud.com';
+    if (forceSignHost && !headers.Host && !headers.host && opt.Bucket && opt.Region) headers.Host = opt.Bucket + '.cos.' + opt.Region + '.myqcloud.com';
 
     if (!SecretId) throw new Error('missing param SecretId');
     if (!SecretKey) throw new Error('missing param SecretKey');

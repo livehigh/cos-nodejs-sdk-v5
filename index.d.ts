@@ -189,6 +189,8 @@ declare namespace COS {
         params: GetAuthorizationCallbackParams
       ) => void
     ) => void,
+    /** 获取签名/预签名函数，默认签入Header Host */
+    ForceSignHost?: boolean,
   }
 
   type StringOrBuffer = Buffer | String;
@@ -223,6 +225,8 @@ declare namespace COS {
     KeyTime?: string,
     /** 校正时间的偏移值，单位 ms(毫秒)，计算签名时会用设备当前时间戳加上该偏移值，在设备时间有误时可用于校正签名用的时间参数。 */
     SystemClockOffset?: number,
+    /** 获取签名/预签名函数，默认签入Header Host */
+    ForceSignHost?: boolean,
   }
 
   /** 计算签名或获取临时密钥可能需要的参数列表 */
@@ -1880,6 +1884,8 @@ Bulk：批量模式，恢复时间为24 - 48小时。 */
     QueryString?: string,
     /** 签名几秒后失效，默认为900秒 */
     Expires?: number,
+    /** 获取签名/预签名函数，默认签入Header Host */
+    ForceSignHost?: boolean,
   }
   /** getObjectUrl 接口返回值 */
   interface GetObjectUrlResult {
@@ -1921,6 +1927,8 @@ Bulk：批量模式，恢复时间为24 - 48小时。 */
     Query?: Query,
     /** 请求里的 Header 参数 */
     Headers?: Headers,
+    /** 获取签名/预签名函数，默认签入Header Host */
+    ForceSignHost?: boolean,
   }
 
 }
