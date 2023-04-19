@@ -390,11 +390,11 @@ group('init cos', function() {
     putFile(initCos, done, assert);
   });
   test('SecretKey格式错误', function(done, assert) {
-    var initCos = new COS({
+      var initCos = new COS({
         SecretId: config.SecretId,
         SecretKey: config.SecretKey + ' ',
       });
-      putFile(initCos, done, assert);
+      putFile(initCos, done, assert, false);
     });
     test('StrictSsl=false', function(done, assert) {
       var initCos = new COS({
@@ -402,7 +402,7 @@ group('init cos', function() {
         SecretKey: config.SecretKey,
         StrictSsl: false,
       });
-      putFile(initCos, done, assert);
+      putFile(initCos, done, assert, true);
     });
     test('Tunnel=false', function(done, assert) {
       var initCos = new COS({
@@ -410,7 +410,7 @@ group('init cos', function() {
         SecretKey: config.SecretKey,
         Tunnel: false,
       });
-      putFile(initCos, done, assert);
+      putFile(initCos, done, assert, true);
     });
     test('Timeout=6000', function(done, assert) {
       var initCos = new COS({
@@ -418,7 +418,7 @@ group('init cos', function() {
         SecretKey: config.SecretKey,
         Timeout: 6000,
       });
-      putFile(initCos, done, assert);
+      putFile(initCos, done, assert, true);
     });
   test('模拟sms init', function(done, assert) {
       var Credentials = {
@@ -430,9 +430,31 @@ group('init cos', function() {
         Credentials.secretId = '123456';
         Credentials.secretKey = 'abcdefg';
       }, 1000);
-      putFile(initCos, done, assert);
+      putFile(initCos, done, assert, true);
   });
-  test('getAuthorization', function(done, assert) {
+  test('getAuthorization error tmpSecretId', function(done, assert) {
+    var initCos = new COS({
+      getAuthorization: function (options, callback) {
+        callback({
+          tmpSecretId: config.SecretId,
+          TmpSecretKey: config.SecretKey,
+      });
+      }
+    });
+    putFile(initCos, done, assert, false);
+  });
+  test('getAuthorization error tmpSecretKey', function(done, assert) {
+    var initCos = new COS({
+      getAuthorization: function (options, callback) {
+        callback({
+          TmpSecretId: config.SecretId,
+          tmpSecretKey: config.SecretKey,
+      });
+      }
+    });
+    putFile(initCos, done, assert, false);
+  });
+  test('getAuthorization error', function(done, assert) {
     var initCos = new COS({
       getAuthorization: function (options, callback) {
         callback({
@@ -441,7 +463,7 @@ group('init cos', function() {
       });
       }
     });
-    putFile(initCos, done, assert);
+    putFile(initCos, done, assert, false);
   });
   test('getAuthorization', function(done, assert) {
     var initCos = new COS({
